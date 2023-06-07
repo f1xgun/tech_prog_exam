@@ -20,7 +20,6 @@ QByteArray parser(QByteArray req, int user_id) {
     else {
         command = req_string;
     }
-    qDebug() << QString::fromStdString(command) << QString::fromStdString(login) << QString::fromStdString(room_name);
     return command_recognizer(command, login, room_name, user_id);
 }
 
@@ -31,13 +30,26 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
                 return QByteArray::fromStdString("Вы уже состоите в одной из очередей!");
             }
         }
-        // todo: check user not in query
         if (rooms.contains(room_name)) {
             QMap<int, std::string>& room = rooms[room_name];
             room[user_id] = login;
+            qDebug() << room.size();
             if (room.size() == 7) {
-                return QByteArray::fromStdString("disconnect");
+                QByteArray result = "disconnect\r\n";
+                for (auto& user : room.keys()) {
+                    result += QByteArray::fromStdString(std::to_string(user)) + "\r\n";
+                }
+                result += "Очередь:\r\n";
+                for (const auto& room : rooms) {
+                    if (room.contains(user_id)) {
+                        for (const auto& user : room) {
+                            result += user + "\r\n";
+                        }
+                    }
+                }
+                return result;
             }
+            rooms[room_name].clear();
             return QByteArray::fromStdString("Вы успешно подключились к комнате");
         }
         return QByteArray::fromStdString("Комната с таким названием не существует!");
@@ -56,22 +68,29 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
         return QByteArray::fromStdString("Вы не состоите ни в одной очереди!");
     }
     else if (command == "stats") {
+        qDebug() << rooms.size();
         for (const auto& room : rooms) {
+            qDebug() << room.size();
+            for (const auto& user : room.keys()) qDebug() << user;
             if (room.contains(user_id)) {
-                QByteArray result;
+                qDebug() << "zalupa";
+                QByteArray result = "Очередь:\r\n";
                 for (const auto& user : room) {
+                    result += user + "\r\n";
                     qDebug() << QString::fromStdString(user);
                 }
-//                qDebug() << room;
+                return result;
             }
         }
         return QByteArray::fromStdString("Вы не состоите ни в одной очереди!");
     }
     else if (command == "rooms") {
+        QByteArray result = "Комнаты:\r\n";
         for (const auto& room : rooms.keys()) {
+            result += room + "\r\n";
             qDebug() << QString::fromStdString(room);
         }
-        return QByteArray::fromStdString("Комнаты:");
+        return result;
     }
     else if (command == "newroom") {
         if (!rooms.contains(room_name)) {

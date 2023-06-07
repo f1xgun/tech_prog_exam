@@ -52,7 +52,21 @@ void MyTcpServer::slotServerRead()
     {
         array = clientSocket->readAll();
     }
-    clientSocket->write(parser(array.trimmed(), clientSocket->socketDescriptor()) + "\r\n");
+    QByteArray result = parser(array.trimmed(), clientSocket->socketDescriptor());
+    if (result.toStdString().find("disconnect") != std::string::npos) {
+        QStringList strings = QString(result).split("\r\n");
+        for (int i = 1; i < 8; i++) {
+            for (int j = 8; j < 15; j++) {
+                SClients[strings[i].toInt()]->write(strings[j].toUtf8()+ "\r\n");
+            }
+            SClients[strings[i].toInt()]->write("Отключение от очереди в комнату!");
+            SClients.remove(strings[i].toInt());
+        }
+    }
+    else {
+        clientSocket->write(result + "\r\n");
+    }
+
 }
 
 void MyTcpServer::slotClientDisconnected()
