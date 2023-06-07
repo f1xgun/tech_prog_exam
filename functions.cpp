@@ -33,7 +33,6 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
         if (rooms.contains(room_name)) {
             QMap<int, std::string>& room = rooms[room_name];
             room[user_id] = login;
-            qDebug() << room.size();
             if (room.size() == 7) {
                 QByteArray result = "disconnect\r\n";
                 for (auto& user : room.keys()) {
@@ -47,9 +46,9 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
                         }
                     }
                 }
+                rooms[room_name].clear();
                 return result;
             }
-            rooms[room_name].clear();
             return QByteArray::fromStdString("Вы успешно подключились к комнате");
         }
         return QByteArray::fromStdString("Комната с таким названием не существует!");
@@ -68,12 +67,9 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
         return QByteArray::fromStdString("Вы не состоите ни в одной очереди!");
     }
     else if (command == "stats") {
-        qDebug() << rooms.size();
         for (const auto& room : rooms) {
-            qDebug() << room.size();
             for (const auto& user : room.keys()) qDebug() << user;
             if (room.contains(user_id)) {
-                qDebug() << "zalupa";
                 QByteArray result = "Очередь:\r\n";
                 for (const auto& user : room) {
                     result += user + "\r\n";
