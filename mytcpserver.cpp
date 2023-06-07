@@ -52,7 +52,7 @@ void MyTcpServer::slotServerRead()
     {
         array = clientSocket->readAll();
     }
-    qDebug() << QString::fromStdString(parser(array.trimmed()).toStdString());
+    clientSocket->write(parser(array.trimmed(), clientSocket->socketDescriptor()) + "\r\n");
 }
 
 void MyTcpServer::slotClientDisconnected()
