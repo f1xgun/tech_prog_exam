@@ -41,8 +41,8 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
                 result += "Очередь:\r\n";
                 for (const auto& room : rooms) {
                     if (room.contains(user_id)) {
-                        for (const auto& user : room) {
-                            result += user + "\r\n";
+                        for (auto& user : room) {
+                            result += QString::fromStdString(user).toUtf8() + "\r\n";
                         }
                     }
                 }
@@ -71,9 +71,8 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
             for (const auto& user : room.keys()) qDebug() << user;
             if (room.contains(user_id)) {
                 QByteArray result = "Очередь:\r\n";
-                for (const auto& user : room) {
-                    result += user + "\r\n";
-                    qDebug() << QString::fromStdString(user);
+                for (auto& user : room) {
+                    result += QString::fromStdString(user).toUtf8() + "\r\n";
                 }
                 return result;
             }
@@ -83,8 +82,7 @@ QByteArray command_recognizer(std::string command, std::string login, std::strin
     else if (command == "rooms") {
         QByteArray result = "Комнаты:\r\n";
         for (const auto& room : rooms.keys()) {
-            result += room + "\r\n";
-            qDebug() << QString::fromStdString(room);
+            result += QString::fromStdString(room).toUtf8() + "\r\n";
         }
         return result;
     }
