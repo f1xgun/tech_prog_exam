@@ -8,6 +8,7 @@ CONFIG -= app_bundle
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+    functions.cpp \
         main.cpp \
     mytcpserver.cpp
 
@@ -16,6 +17,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    functions.h \
     mytcpserver.h
 
 TARGET = hallServer

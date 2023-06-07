@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu
 
 LABEL author="f1xgun"
 
@@ -17,4 +17,4 @@ COPY *.pro /Mikhaylov_221-3210
 RUN qmake echoServer.pro
 RUN make hallServer
 
-ENTRYPOINT ["./ProgToStart"]
+ENTRYPOINT ["./hallServer"]

@@ -11,6 +11,7 @@
 class MyTcpServer : public QObject
 {
     Q_OBJECT
+    static MyTcpServer *instance;
 public:
     explicit MyTcpServer(QObject *parent = nullptr);
     ~MyTcpServer();
@@ -19,17 +20,10 @@ public slots:
     void slotClientDisconnected();
 
     void slotServerRead();
-    //void slotReadClient();
+
 private:
-    QTcpServer * mTcpServer;
-    QTcpSocket * mTcpSocket;
+    QTcpServer *mTcpServer;
+    QMap<int, QTcpSocket *> SClients;
     int server_status;
 };
 #endif // MYSERVER_H
-
-
-
-
-
-
-
